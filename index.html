@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>🕷️ SPIDER CLOCK PRO | @C3CCC3C</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: radial-gradient(circle at 30% 10%, #0a0f0a, #000000);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Courier New', monospace;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* تأثير الغبار / الضباب */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,0,0.02) 0px, rgba(0,255,0,0.02) 2px, transparent 2px, transparent 6px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .clock-wrapper {
+            position: relative;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 0 8px rgba(0, 255, 0, 0.1),
+                0 0 0 12px rgba(0, 255, 0, 0.05),
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                inset 0 0 30px rgba(0, 255, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        canvas {
+            display: block;
+            border-radius: 50%;
+            width: min(75vw, 75vh);
+            height: min(75vw, 75vh);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            transition: transform 0.2s;
+        }
+
+        canvas:hover {
+            transform: scale(1.01);
+        }
+
+        .info-panel {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 10px 28px;
+            border: 1px solid rgba(0, 255, 0, 0.4);
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-family: monospace;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .info-item {
+            color: #0f0;
+            font-size: 1rem;
+            letter-spacing: 1.5px;
+        }
+
+        .info-item span {
+            color: #ff5555;
+            margin-right: 6px;
+        }
+
+        .credit {
+            position: fixed;
+            bottom: 18px;
+            right: 22px;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(8px);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 13px;
+            color: #8bc34a;
+            font-family: monospace;
+            border-right: 2px solid #0f0;
+            border-bottom: 2px solid #0f0;
+            z-index: 999;
+            letter-spacing: 1px;
+        }
+
+        .credit span {
+            color: #ff5555;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+            .info-panel { padding: 6px 18px; gap: 12px; }
+            .info-item { font-size: 0.7rem; }
+            .credit { font-size: 9px; bottom: 10px; right: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="clock-wrapper">
+        <canvas id="spiderCanvasPro" width="700" height="700"></canvas>
+    </div>
+    <div class="info-panel">
+        <div class="info-item"><span>🕸️</span> SPIDER ENGINE</div>
+        <div class="info-item"><span>⚡</span> REAL TIME</div>
+        <div class="info-item"><span>🕷️</span> LIVE MOTION</div>
+    </div>
+</div>
+<div class="credit">⚡ @<span>C3CCC3C</span> | SPIDER CLOCK PRO ⚡</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('spiderCanvasPro');
+        const ctx = canvas.getContext('2d');
+        
+        let size = 700;
+        let center = size / 2;
+        let radius = center * 0.86;
+        let webGlow = true;
+        
+        function resizeCanvas() {
+            const wrapper = document.querySelector('.clock-wrapper');
+            const maxDim = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+            size = maxDim;
+            canvas.width = size;
+            canvas.height = size;
+            center = size / 2;
+            radius = center * 0.86;
+            drawClock();
+        }
+        
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+        });
+        resizeCanvas();
+        
+        // رسم دوائر العنكبوت بتأثير توهج
+        function drawGlowCircle(r, color, lineW = 1.2, glow = false) {
+            ctx.beginPath();
+            ctx.arc(center, center, r, 0, Math.PI * 2);
+            if (glow) {
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#0f0';
+            } else {
+                ctx.shadowBlur = 0;
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineW;
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+        
+        // خيوط العنكبوت المتقدمة
+        function drawAdvancedWeb() {
+            // دوائر متعددة بتدرج
+            for (let i = 1; i <= 6; i++) {
+                const r = radius * i / 6;
+                const opacity = 0.3 + (i / 12);
+                drawGlowCircle(r, `rgba(80, 200, 80, ${opacity})`, 1.0, i === 3);
+            }
+            
+            // خطوط شعاعية دقيقة
+            for (let i = 0; i < 24; i++) {
+                const angle = (i * 15 - 90) * Math.PI / 180;
+                const x1 = center + Math.cos(angle) * (radius * 0.2);
+                const y1 = center + Math.sin(angle) * (radius * 0.2);
+                const x2 = center + Math.cos(angle) * radius;
+                const y2 = center + Math.sin(angle) * radius;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = `rgba(50, 180, 50, ${0.2 + (i/80)})`;
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+            }
+            
+            // خيوط متعرجة (web pattern)
+            for (let step = 0; step < 360; step += 15) {
+                const rad1 = step * Math.PI / 180;
+                const rad2 = (step + 7) * Math.PI / 180;
+                const r1 = radius * 0.45;
+                const r2 = radius * 0.6;
+                const x1 = center + Math.cos(rad1) * r1;
+                const y1 = center + Math.sin(rad1) * r1;
+                const x2 = center + Math.cos(rad2) * r2;
+                const y2 = center + Math.sin(rad2) * r2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = '#2a7a2a';
+                ctx.lineWidth = 0.6;
+                ctx.stroke();
+            }
+        }
+        
+        // أرقام عصرية
+        function drawModernNumbers() {
+            ctx.font = `500 ${Math.floor(radius * 0.11)}px "Segoe UI", "Poppins", monospace`;
+            ctx.fillStyle = '#b3ffb3';
+            ctx.shadowBlur = 0;
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const numX = center + Math.cos(angle) * (radius * 0.74);
+                const numY = center + Math.sin(angle) * (radius * 0.74);
+                ctx.fillText(i.toString(), numX, numY);
+            }
+        }
+        
+        // رسم عنكبوت احترافي
+        function drawSpiderPro(x, y, angle, sizeScale = 1.0, isMain = false) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            const bodyW = 12 * sizeScale;
+            const bodyH = 9 * sizeScale;
+            
+            // توهج خفيف للعنكبوت الرئيسي
+            if (isMain) {
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#ff4444';
+            }
+            
+            // الجسم
+            ctx.beginPath();
+            ctx.ellipse(0, 0, bodyW, bodyH, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#111111';
+            ctx.fill();
+            ctx.strokeStyle = isMain ? '#ff6666' : '#33ff33';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // عيون حمراء متوهجة
+            ctx.fillStyle = '#ff3333';
+            ctx.shadowBlur = 5;
+            ctx.beginPath();
+            ctx.arc(bodyW * 0.28, -bodyH * 0.25, bodyW * 0.2, 0, Math.PI * 2);
+            ctx.arc(bodyW * 0.28, bodyH * 0.25, bodyW * 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // أرجل العنكبوت
+            ctx.strokeStyle = isMain ? '#ff8888' : '#55ff55';
+            ctx.lineWidth = 1.2;
+            for (let s = -1; s <= 1; s += 2) {
+                for (let leg = 1; leg <= 3; leg++) {
+                    ctx.beginPath();
+                    ctx.moveTo(bodyW * 0.3, leg * bodyH * 0.2 * s);
+                    ctx.quadraticCurveTo(bodyW * 0.75, leg * bodyH * 0.4 * s, bodyW * 1.05, leg * bodyH * 0.3 * s);
+                    ctx.stroke();
+                }
+            }
+            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+        
+        // عقارب احترافية متحركة
+        function drawEliteHands(now) {
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            const hourAngle = (hours * 30 + minutes * 0.5 - 90) * Math.PI / 180;
+            const minuteAngle = (minutes * 6 - 90) * Math.PI / 180;
+            const secondAngle = (seconds * 6 - 90) * Math.PI / 180;
+            
+            // عقرب الساعات
+            const hx = center + Math.cos(hourAngle) * (radius * 0.52);
+            const hy = center + Math.sin(hourAngle) * (radius * 0.52);
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.lineTo(hx, hy);
+            ctx.strokeStyle = '#aaffaa';
+            ctx.lineWidth = 4;
+            ctx.shadowBlur = 4;
+            ctx.stroke();
+            
+            // عقرب الدقائق
+            const mx = center + Math.cos(minuteAngle) * (radius * 0.71);
+            const my = center + Math.sin(minuteAngle) * (radius * 0.71);
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.lineTo(mx, my);
+            ctx.strokeStyle = '#44ddff';
+            ctx.lineWidth = 3.5;
+            ctx.stroke();
+            
+            // عقرب الثواني
+            const sx = center + Math.cos(secondAngle) * (radius * 0.84);
+            const sy = center + Math.sin(secondAngle) * (radius * 0.84);
+            ctx.beginPath();
+            ctx.moveTo(center, center);
+            ctx.lineTo(sx, sy);
+            ctx.strokeStyle = '#ff7777';
+            ctx.lineWidth = 2.2;
+            ctx.stroke();
+            
+            // عناكب متحركة
+            drawSpiderPro(sx, sy, secondAngle + Math.PI / 1.9, 0.8, false);
+            drawSpiderPro(center, center, hourAngle, 1.1, true);
+        }
+        
+        // عرض الوقت الرقمي بشكل أنيق
+        function drawElegantDigital(now) {
+            ctx.font = `500 ${Math.floor(radius * 0.09)}px "Segoe UI", monospace`;
+            ctx.fillStyle = '#ccffcc';
+            ctx.shadowBlur = 0;
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false });
+            const dateString = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            ctx.fillText(timeString, center, center + radius * 0.58);
+            ctx.font = `12px monospace`;
+            ctx.fillStyle = '#88aa88';
+            ctx.fillText(dateString, center, center + radius * 0.68);
+        }
+        
+        // رسم خلفية الساعة
+        function drawClockBackground() {
+            const grad = ctx.createLinearGradient(center - radius, center - radius, center + radius, center + radius);
+            grad.addColorStop(0, '#050a05');
+            grad.addColorStop(1, '#001000');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, size, size);
+            
+            // إطار خارجي أنيق
+            ctx.beginPath();
+            ctx.arc(center, center, radius + 6, 0, Math.PI * 2);
+            ctx.strokeStyle = '#2fbf2f';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(center, center, radius + 2, 0, Math.PI * 2);
+            ctx.strokeStyle = '#1f8f1f';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+        
+        // الدورة الرئيسية للرسم
+        function drawClock() {
+            if (!ctx) return;
+            ctx.clearRect(0, 0, size, size);
+            ctx.save();
+            ctx.shadowBlur = 0;
+            
+            drawClockBackground();
+            drawAdvancedWeb();
+            drawModernNumbers();
+            
+            const now = new Date();
+            drawEliteHands(now);
+            drawElegantDigital(now);
+            
+            // نقطة مركزية حمراء بتأثير
+            ctx.beginPath();
+            ctx.arc(center, center, 7, 0, Math.PI * 2);
+            ctx.fillStyle = '#dd3333';
+            ctx.shadowBlur = 8;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(center, center, 3, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        setInterval(() => drawClock(), 1000);
+        drawClock();
+    })();
+</script>
+</body>
+</html>
